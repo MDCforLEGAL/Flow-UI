@@ -6,9 +6,12 @@
 	},
 	"id": "mdcforlegal.mdc_ui",
 	"name": "MDC UI",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"developer": "MDCforLEGAL",
 	"description": "Modern, minimalist dark theme Flow UI mod for Geometry Dash.",
+	"links": {
+		"source": "https://github.com/MDCforLEGAL/Flow-UI"
+	},
 	"dependencies": {
 		"geode.node-ids": ">=v1.23.3"
 	},
@@ -27,6 +30,12 @@
 			"control": {
 				"slider": true
 			}
+		},
+		"check-updates": {
+			"type": "bool",
+			"name": "Güncelleme Kontrolü",
+			"description": "Başlangıçta GitHub Releases'ten güncelleme kontrol et",
+			"default": true
 		}
 	}
 }

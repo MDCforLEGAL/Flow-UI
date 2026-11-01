@@ -2,6 +2,7 @@
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/LoadingLayer.hpp>
 #include <Geode/binding/FMODAudioEngine.hpp>
+#include <Geode/utils/web.hpp>
 
 using namespace geode::prelude;
 
@@ -17,12 +18,12 @@ class $modify(FlowMenuLayer, MenuLayer) {
             darkness = mod->getSettingValue<float>("darkness");
         }
 
-        // Strong dark overlay (visible)
+        // Strong dark overlay
         auto overlay = CCLayerColor::create(ccc4(0, 0, 0, static_cast<GLubyte>(200 * darkness)));
         overlay->setZOrder(-5);
         this->addChild(overlay);
 
-        // Replace RobTop logo area with MDC
+        // Hide RobTop logo button
         if (auto social = this->getChildByID("social-media-menu")) {
             if (auto robtopBtn = social->getChildByID("robtop-logo-button")) {
                 robtopBtn->setVisible(false);
@@ -37,7 +38,6 @@ class $modify(FlowMenuLayer, MenuLayer) {
         mdcLabel->setZOrder(10);
         this->addChild(mdcLabel);
 
-        // Soft flowing pulse on title
         auto pulse = CCSequence::create(
             CCFadeTo::create(1.2f, 180),
             CCFadeTo::create(1.2f, 255),
@@ -45,7 +45,7 @@ class $modify(FlowMenuLayer, MenuLayer) {
         );
         mdcLabel->runAction(CCRepeatForever::create(pulse));
 
-        // Flow button (more visible)
+        // Flow button
         auto btn = CCMenuItemSpriteExtra::create(
             CCSprite::createWithSpriteFrameName("GJ_likeBtn_001.png"),
             this,
@@ -59,7 +59,6 @@ class $modify(FlowMenuLayer, MenuLayer) {
             menu->updateLayout();
         }
 
-        // Continuous soft scale pulse on button
         auto btnPulse = CCSequence::create(
             CCScaleTo::create(0.8f, 1.15f),
             CCScaleTo::create(0.8f, 1.0f),
@@ -67,8 +66,37 @@ class $modify(FlowMenuLayer, MenuLayer) {
         );
         btn->runAction(CCRepeatForever::create(btnPulse));
 
-        log::info("MDC UI - Flow theme applied to MenuLayer");
+        // Auto update check
+        if (mod->getSettingValue<bool>("check-updates")) {
+            this->checkForUpdate();
+        }
+
+        log::info("MDC UI v1.0.1 - Flow theme applied");
         return true;
+    }
+
+    void checkForUpdate() {
+        web::WebRequest()
+            .get("https://api.github.com/repos/MDCforLEGAL/Flow-UI/releases/latest")
+            .listen([this](web::WebResponse* res) {
+                if (!res->ok()) return;
+                auto json = res->json().unwrapOr(nlohmann::json{});
+                if (!json.contains("tag_name")) return;
+
+                std::string latest = json["tag_name"];
+                if (latest.starts_with("v")) latest = latest.substr(1);
+
+                std::string current = Mod::get()->getVersion().toString();
+                if (latest != current) {
+                    queueInMainThread([latest] {
+                        FLAlertLayer::create(
+                            "MDC UI Güncelleme",
+                            fmt::format("Yeni sürüm bulundu: v{}\nGitHub Releases'ten indirip yükle.", latest),
+                            "Tamam"
+                        )->show();
+                    });
+                }
+            });
     }
 
     void onFlowButton(CCObject*) {
@@ -90,12 +118,10 @@ class $modify(FlowLoadingLayer, LoadingLayer) {
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
 
-        // Dark loading background
         auto dark = CCLayerColor::create(ccc4(8, 8, 12, 255));
         dark->setZOrder(-10);
         this->addChild(dark);
 
-        // MDC loading text
         auto loadLabel = CCLabelBMFont::create("MDC", "bigFont.fnt");
         loadLabel->setScale(1.6f);
         loadLabel->setPosition(winSize / 2);
@@ -103,7 +129,6 @@ class $modify(FlowLoadingLayer, LoadingLayer) {
         loadLabel->setZOrder(5);
         this->addChild(loadLabel);
 
-        // Soft pulse on loading text
         auto pulse = CCSequence::create(
             CCScaleTo::create(0.7f, 1.7f),
             CCScaleTo::create(0.7f, 1.5f),
@@ -111,7 +136,6 @@ class $modify(FlowLoadingLayer, LoadingLayer) {
         );
         loadLabel->runAction(CCRepeatForever::create(pulse));
 
-        log::info("MDC UI - Loading screen themed");
         return true;
     }
 };
