@@ -92,7 +92,8 @@ class $modify(FlowMenuLayer, MenuLayer) {
                 std::string latest = tagRes.unwrap().asString().unwrapOr("");
                 if (latest.starts_with("v")) latest = latest.substr(1);
 
-                std::string current = Mod::get()->getVersion().toDEPRECATEDString();
+                auto ver = Mod::get()->getVersion();
+                std::string current = fmt::format("{}.{}.{}", ver.getMajor(), ver.getMinor(), ver.getPatch());
                 if (latest != current && !latest.empty()) {
                     FLAlertLayer::create(
                         "MDC UI Güncelleme",
