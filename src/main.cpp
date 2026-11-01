@@ -1,5 +1,6 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
+#include <Geode/binding/FMODAudioEngine.hpp>
 
 using namespace geode::prelude;
 
@@ -44,8 +45,8 @@ class $modify(FlowMenuLayer, MenuLayer) {
 
     void onFlowButton(CCObject*) {
         if (Mod::get()->getSettingValue<bool>("sound-effects")) {
-            // Simple click feedback
-            GameSoundManager::sharedManager()->playEffect("click.ogg");
+            // Correct way to play a sound effect in Geode / Geometry Dash
+            FMODAudioEngine::sharedEngine()->playEffect("click.ogg");
         }
         FLAlertLayer::create(
             "MDC UI",
