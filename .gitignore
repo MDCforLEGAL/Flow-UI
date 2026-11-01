@@ -1,0 +1,8 @@
+build/
+.geode/
+*.geode
+.DS_Store
+*.user
+.vs/
+.vscode/
+cmake-build-*/
