@@ -3,6 +3,7 @@
 #include <Geode/modify/LoadingLayer.hpp>
 #include <Geode/binding/FMODAudioEngine.hpp>
 #include <Geode/utils/web.hpp>
+#include <Geode/utils/async.hpp>
 
 using namespace geode::prelude;
 
@@ -76,27 +77,31 @@ class $modify(FlowMenuLayer, MenuLayer) {
     }
 
     void checkForUpdate() {
-        web::WebRequest()
-            .get("https://api.github.com/repos/MDCforLEGAL/Flow-UI/releases/latest")
-            .listen([this](web::WebResponse* res) {
-                if (!res->ok()) return;
-                auto json = res->json().unwrapOr(nlohmann::json{});
-                if (!json.contains("tag_name")) return;
+        async::spawn(
+            web::WebRequest().get("https://api.github.com/repos/MDCforLEGAL/Flow-UI/releases/latest"),
+            [](web::WebResponse resp) {
+                if (!resp.ok()) return;
 
-                std::string latest = json["tag_name"];
+                auto jsonRes = resp.json();
+                if (!jsonRes.isOk()) return;
+                auto json = jsonRes.unwrap();
+
+                auto tagRes = json.get("tag_name");
+                if (!tagRes.isOk()) return;
+
+                std::string latest = tagRes.unwrap().asString().unwrapOr("");
                 if (latest.starts_with("v")) latest = latest.substr(1);
 
-                std::string current = Mod::get()->getVersion().toString();
-                if (latest != current) {
-                    queueInMainThread([latest] {
-                        FLAlertLayer::create(
-                            "MDC UI Güncelleme",
-                            fmt::format("Yeni sürüm bulundu: v{}\nGitHub Releases'ten indirip yükle.", latest),
-                            "Tamam"
-                        )->show();
-                    });
+                std::string current = Mod::get()->getVersion().toDEPRECATEDString();
+                if (latest != current && !latest.empty()) {
+                    FLAlertLayer::create(
+                        "MDC UI Güncelleme",
+                        fmt::format("Yeni sürüm bulundu: v{}\nGitHub Releases'ten indirip yükle.", latest),
+                        "Tamam"
+                    )->show();
                 }
-            });
+            }
+        );
     }
 
     void onFlowButton(CCObject*) {
