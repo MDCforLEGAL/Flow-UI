@@ -5,8 +5,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*"
 
 jobs:
   build:
@@ -16,9 +14,6 @@ jobs:
         config:
           - name: Windows
             os: windows-latest
-          - name: Android32
-            os: ubuntu-latest
-            target: Android32
           - name: Android64
             os: ubuntu-latest
             target: Android64
@@ -50,20 +45,18 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     needs: [package]
-    if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
+    if: success()
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: Build-Output
           path: dist
-      - name: Create or Update Release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}
-          name: MDC UI ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'v1.0.0' }}
+          tag_name: v1.0.0
+          name: MDC UI v1.0.0
           files: dist/**
           generate_release_notes: true
-          draft: false
-          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

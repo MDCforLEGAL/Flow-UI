@@ -2,63 +2,25 @@
 	"geode": "5.11.2",
 	"gd": {
 		"win": "2.2091",
-		"android": "2.2091",
-		"mac": "2.2091",
-		"ios": "2.2091"
+		"android": "2.2091"
 	},
 	"id": "mdcforlegal.mdc_ui",
 	"name": "MDC UI",
 	"version": "1.0.0",
 	"developer": "MDCforLEGAL",
-	"description": "Modern, minimalist dark theme, siyah-beyaz görsel estetik, \"Flow\" leveli temalı akıcı efektler ve tamamen özelleştirilebilir arayüz modu.",
+	"description": "Modern, minimalist dark theme Flow UI mod for Geometry Dash.",
 	"dependencies": {
 		"geode.node-ids": ">=v1.23.3"
 	},
 	"settings": {
-		"flow-effects": {
-			"type": "bool",
-			"name": "Flow Efektleri",
-			"description": "Buton salınımı, parlama ve ritmik pulse efektlerini aç/kapat",
-			"default": true
-		},
-		"wind-particles": {
-			"type": "bool",
-			"name": "Rüzgar Partikülleri",
-			"description": "Menü arka planında akıcı rüzgar ve çizgisel partikül efektlerini aç/kapat",
-			"default": true
-		},
-		"wind-speed": {
-			"type": "float",
-			"name": "Rüzgar Hızı",
-			"description": "Partikül akış hızını ayarla",
-			"default": 1.5,
-			"min": 0.2,
-			"max": 5.0,
-			"control": {
-				"slider": true
-			}
-		},
-		"flow-intensity": {
-			"type": "float",
-			"name": "Akış Yoğunluğu",
-			"description": "Salınım ve parlama yoğunluğunu ayarla",
-			"default": 1.0,
-			"min": 0.1,
-			"max": 3.0,
-			"control": {
-				"slider": true
-			}
-		},
 		"sound-effects": {
 			"type": "bool",
 			"name": "Ses Efektleri",
-			"description": "Buton tıklamaları ve geçişler için modern klik seslerini aç/kapat",
 			"default": true
 		},
 		"darkness": {
 			"type": "float",
 			"name": "Karanlık Seviyesi",
-			"description": "Arayüzün siyahık oranını ayarla (0.5 = yarı, 1.0 = tam siyah)",
 			"default": 0.85,
 			"min": 0.5,
 			"max": 1.0,
